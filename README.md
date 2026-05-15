@@ -30,4 +30,3 @@ Project Tasks:
 * **Technical Implementation:** Developed using `functions`, `structures`, and `file handling`.
 
 ---
-*Note: As per internship requirements, at least two or three of the above tasks must be completed for certification.*
