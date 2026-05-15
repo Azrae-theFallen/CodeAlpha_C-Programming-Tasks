@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <ctype.h> // For tolower() function
+
+int main(void) {
+    int choice;
+    double num1, num2;
+    char flowControl;
+    int running = 1;
+
+    while (running) {
+        // --- MAIN MENU ---
+        printf("\n==================================\n");
+        printf("   SYSTEM: ARITHMETIC INTERFACE   \n");
+        printf("==================================\n");
+        printf(" 1. [ADD]      Addition\n");
+        printf(" 2. [SUB]      Subtraction\n");
+        printf(" 3. [MUL]      Multiplication\n");
+        printf(" 4. [DIV]      Division\n");
+        printf(" 5. [EXIT]     Close Program\n");
+        printf("----------------------------------\n");
+        printf("Select Operation (1-5): ");
+        
+        if (scanf("%d", &choice) != 1) {
+            printf("\n[ERROR] Invalid input. Please use numbers.\n");
+            while (getchar() != '\n'); 
+            continue;
+        }
+
+        if (choice == 5) {
+            break; 
+        }
+
+        if (choice < 1 || choice > 4) {
+            printf("\n[WARNING] Invalid selection. Try again.\n");
+            continue;
+        }
+
+        // --- SUB-MENU (Input) ---
+        printf("\nEnter first value: ");
+        scanf("%lf", &num1);
+        printf("Enter second value: ");
+        scanf("%lf", &num2);
+
+        // --- RESULTS MENU ---
+        printf("\n--- CALCULATION REPORT ---\n");
+        switch (choice) {
+            case 1: printf("Result: %.2f + %.2f = %.2f\n", num1, num2, num1 + num2); break;
+            case 2: printf("Result: %.2f - %.2f = %.2f\n", num1, num2, num1 - num2); break;
+            case 3: printf("Result: %.2f * %.2f = %.2f\n", num1, num2, num1 * num2); break;
+            case 4: 
+                if (num2 == 0) printf("[CRITICAL ERROR] Division by zero is not possible.\n");
+                else printf("Result: %.2f / %.2f = %.2f\n", num1, num2, num1 / num2); 
+                break;
+        }
+        printf("----------------------------------\n");
+
+        // --- FLOW CONTROL MENU (The Twist) ---
+        printf("Choose: [C]ontinue to Menu or [E]xit Program? ");
+        scanf(" %c", &flowControl);
+        
+        if (tolower(flowControl) == 'e') {
+            running = 0; // Break the loop
+        } else {
+            printf("\nReturning to Main Menu...\n");
+        }
+    }
+
+    printf("\n[SYSTEM] Process Terminated. Goodbye!\n");
+    return 0;
+}
