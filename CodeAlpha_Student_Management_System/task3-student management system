@@ -1,0 +1,215 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[50];
+    float gpa;
+} Student;
+
+// Function Prototypes
+int idExists(int id);
+void addStudent();
+void displayAll();
+void searchStudent();
+void updateStudent();
+void deleteStudent();
+void sortRecords();
+
+const char* FILE_NAME = "students.dat";
+
+int main() {
+    int choice;
+    while (1) {
+        printf("\n--- STUDENT MANAGEMENT SYSTEM ---");
+        printf("\n1. Add Student (Validated)");
+        printf("\n2. Display All Records");
+        printf("\n3. Search by ID");
+        printf("\n4. Update Record");
+        printf("\n5. Delete Record");
+        printf("\n6. View Sorted (by GPA)");
+        printf("\n7. Exit");
+        printf("\nSelection: ");
+        
+        if (scanf("%d", &choice) != 1) {
+            while(getchar() != '\n'); // Clear invalid input
+            continue;
+        }
+
+        switch (choice) {
+            case 1: addStudent(); break;
+            case 2: displayAll(); break;
+            case 3: searchStudent(); break;
+            case 4: updateStudent(); break;
+            case 5: deleteStudent(); break;
+            case 6: sortRecords(); break;
+            case 7: exit(0);
+            default: printf("Invalid choice!\n");
+        }
+    }
+    return 0;
+}
+
+// --- CORE UTILITY ---
+int idExists(int id) {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) return 0;
+    Student s;
+    while (fread(&s, sizeof(Student), 1, fp)) {
+        if (s.id == id) {
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+
+// --- FEATURES ---
+
+void addStudent() {
+    int tempId;
+    printf("Enter ID: "); 
+    scanf("%d", &tempId);
+
+    if (idExists(tempId)) {
+        printf("Error: ID %d already exists!\n", tempId);
+        return;
+    }
+
+    FILE *fp = fopen(FILE_NAME, "ab");
+    if (!fp) {
+        perror("File Error");
+        return;
+    }
+
+    Student s;
+    s.id = tempId;
+    printf("Enter Name: "); scanf(" %[^\n]s", s.name);
+    printf("Enter GPA: "); scanf("%f", &s.gpa);
+
+    fwrite(&s, sizeof(Student), 1, fp);
+    fclose(fp);
+    printf("Record added successfully.\n");
+}
+
+void displayAll() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) {
+        printf("No records found (File doesn't exist).\n");
+        return;
+    }
+    Student s;
+    printf("\nID\t%-20s\tGPA\n", "Name");
+    printf("------------------------------------------\n");
+    while (fread(&s, sizeof(Student), 1, fp)) {
+        printf("%d\t%-20s\t%.2f\n", s.id, s.name, s.gpa);
+    }
+    fclose(fp);
+}
+
+void searchStudent() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) return;
+    int id, found = 0;
+    Student s;
+    printf("Enter ID to search: ");
+    scanf("%d", &id);
+
+    while (fread(&s, sizeof(Student), 1, fp)) {
+        if (s.id == id) {
+            printf("\nFound: ID %d | Name: %s | GPA: %.2f\n", s.id, s.name, s.gpa);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) printf("Student not found.\n");
+    fclose(fp);
+}
+
+void updateStudent() {
+    FILE *fp = fopen(FILE_NAME, "rb+");
+    if (!fp) return;
+    int id, found = 0;
+    Student s;
+
+    printf("Enter ID to update: ");
+    scanf("%d", &id);
+
+    while (fread(&s, sizeof(Student), 1, fp)) {
+        if (s.id == id) {
+            printf("Current Data: %s (GPA: %.2f)\n", s.name, s.gpa);
+            printf("Enter New Name: "); scanf(" %[^\n]s", s.name);
+            printf("Enter New GPA: "); scanf("%f", &s.gpa);
+
+            fseek(fp, -sizeof(Student), SEEK_CUR);
+            fwrite(&s, sizeof(Student), 1, fp);
+            found = 1;
+            break;
+        }
+    }
+    if (found) printf("Update successful.\n");
+    else printf("Record not found.\n");
+    fclose(fp);
+}
+
+void deleteStudent() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) return;
+    FILE *ft = fopen("temp.dat", "wb");
+    int id, found = 0;
+    Student s;
+
+    printf("Enter ID to delete: ");
+    scanf("%d", &id);
+
+    while (fread(&s, sizeof(Student), 1, fp)) {
+        if (s.id == id) found = 1;
+        else fwrite(&s, sizeof(Student), 1, ft);
+    }
+    fclose(fp);
+    fclose(ft);
+
+    remove(FILE_NAME);
+    rename("temp.dat", FILE_NAME);
+
+    if (found) printf("Record deleted.\n");
+    else printf("Record not found.\n");
+}
+
+void sortRecords() {
+    FILE *fp = fopen(FILE_NAME, "rb");
+    if (!fp) return;
+
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    int count = size / sizeof(Student);
+    rewind(fp);
+
+    if (count <= 0) {
+        printf("Nothing to sort.\n");
+        fclose(fp);
+        return;
+    }
+
+    Student *list = malloc(count * sizeof(Student));
+    fread(list, sizeof(Student), count, fp);
+    fclose(fp);
+
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (list[j].gpa < list[j+1].gpa) {
+                Student temp = list[j];
+                list[j] = list[j+1];
+                list[j+1] = temp;
+            }
+        }
+    }
+
+    printf("\nSorted (Descending by GPA):\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d\t%-20s\t%.2f\n", list[i].id, list[i].name, list[i].gpa);
+    }
+    free(list);
+}
