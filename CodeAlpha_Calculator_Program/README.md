@@ -1,12 +1,12 @@
-Arithmetic Interface System
+## Arithmetic Interface System
 
 A robust, menu-driven command-line calculator written in C. This project was developed as part of the CodeAlpha C Programming Internship. It focuses on mastering core fundamentals like loops, conditional logic, and error-handling strategies.  
 
-Key Features:
+## Key Features:
 
 Four-Function Arithmetic: Handles Addition, Subtraction, Multiplication, and Division. 
 
-Defensive Programming:
+## Defensive Programming:
 
 * Division Guard: Includes a "Critical Error" check to prevent division by zero, which would otherwise crash the program.
 
@@ -16,20 +16,20 @@ Interactive Flow Control: Features a custom "Flow Control Menu" that allows the 
 
 Precision Output: All results are formatted to two decimal places for professional readability.🛠️ Built WithLanguage: CStandard Libraries: stdio.h (Input/Output), ctype.h (Character manipulation for flow control).
 
-How to Use:
+## How to Use:
 
 1.Compile the code:
 
 Bash
-
+```c
 gcc -o calculator main.c
-
+```
 2.Run the program:
 
 Bash
-
+```c
 ./calculator
-
+```
 3.Operation:
 
 (1).Select an operation from the main menu (1-5).
@@ -40,7 +40,7 @@ Bash
 
 (4).Press 'C' to return to the menu or 'E
 
-Proposed Future Improvements:
+## Proposed Future Improvements:
 
 1.To scale this utility into a more advanced tool, the following upgrades are planned:
 
@@ -54,6 +54,4 @@ Proposed Future Improvements:
 
 6.History Logging: Automatically saving all session calculations to a history.txt file using C file handling.
 
-License
-
-Distributed under the MIT License. (This allows for free use and modification for educational purposes).
+License Distributed under the MIT License. 
