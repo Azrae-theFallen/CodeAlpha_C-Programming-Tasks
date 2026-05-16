@@ -45,9 +45,7 @@ Bash
 ```
 
 ## Layout Preview:
-
-Plaintext
-
+```text
 --- STUDENT MANAGEMENT SYSTEM ---
 1. Add Student (Validated)
 2. Display All Records
@@ -60,7 +58,7 @@ Selection: 1
 
 Enter ID: 101
 Error: ID 101 already exists!
-
+```
 ## Planned Upgrades & Future Roadmap:
  
  To transition this CLI utility into an enterprise portfolio project, the following improvements are targeted:
@@ -73,4 +71,5 @@ Error: ID 101 already exists!
 
 [ ] Data Export Interface: Incorporate formatting outputs to save runtime structures out of raw binary files (students.dat) and cleanly map them into comma-separated text sheets (students.csv).
  
- License Distributed under the MIT License.
+ ## License 
+ Distributed under the MIT License.
