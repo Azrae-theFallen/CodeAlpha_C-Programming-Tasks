@@ -1,8 +1,8 @@
-# Student Management System
+Student Management System
 
 A robust, terminal-based CRUD (Create, Read, Update, Delete) application written in **C** to handle student data management. This system uses custom memory structures combined with persistent binary storage to provide data lifecycle tracking without a traditional database.
 
-## Core Features
+Core Features
 * **Create (Add Records):** Stores student data with integrated real-time ID unique validation checks.
 * **Read (Search & Display):** Instantly parses binary logs to locate a specific record or display all active logs in an aligned format.
 * **Update (In-Place Modifications):** Locates records using targeted byte offset jumps and overrides active entries.
