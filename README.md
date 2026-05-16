@@ -1,8 +1,7 @@
-Code Alpha Internship
-
+## Code Alpha Internship
 This repository contains the programming tasks assigned during the CodeAlpha C Programming Internship.
 
-Project Tasks:
+## Project Tasks:
 
 [TASK 1] Basic Calculator Program
 * **Objective:** Write a C program to perform basic arithmetic operations.
