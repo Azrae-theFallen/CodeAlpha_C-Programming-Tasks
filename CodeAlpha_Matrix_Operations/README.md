@@ -33,6 +33,7 @@ Execute the binary:
 ```
 
 Layout Preview:
+```text
 ===== MAIN MENU: MATRIX OPERATIONS =====
 1. Matrix Addition
 2. Matrix Multiplication
@@ -46,8 +47,30 @@ Enter Matrix B rows,cols (e.g., 3,2): 3,2
 
 Error: Matrix columns of A must match rows of B!
 
-Done! Do you want to perform another operation? (y/n):
+Done! Do you want to perform another operation? (y/n):y
 
+===== MAIN MENU: MATRIX OPERATIONS =====
+1. Matrix Addition
+2. Matrix Multiplication
+3. Matrix Transpose
+4. Exit
+Enter choice: 1
+
+[SUB-MENU] Enter rows,columns (e.g., 2,2): 2,1
+Enter Matrix A:
+  [0,0]: 4
+  [1,0]: 5
+Enter Matrix B:
+  [0,0]: 6
+  [1,0]: 4
+
+--- RESULT: ADDITION ---
+  10
+  9
+
+Done! Do you want to perform another operation? (y/n): n
+Exiting program...
+```
 ## Planned Upgrades & Future Roadmap:
 
 [ ] Dynamic Memory Allocation: Replace static arrays (#define MAX 10) with malloc and free for unrestricted matrix sizes.
@@ -56,4 +79,5 @@ Done! Do you want to perform another operation? (y/n):
 
 [ ] Persistent Logging: Export calculation histories to an external matrix_history.txt file using C file handling.[ ] UI Polish: Integrate ANSI color coding (Red for errors, Green for success) and screen-clearing sequences (system("clear")) for seamless terminal navigation.
 
-License Distributed under the MIT License.
+## License 
+Distributed under the MIT License.
