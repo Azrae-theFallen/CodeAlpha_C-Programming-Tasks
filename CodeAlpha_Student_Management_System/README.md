@@ -1,22 +1,22 @@
-Student Management System
+## Student Management System
 
 A robust, terminal-based CRUD (Create, Read, Update, Delete) application written in **C** to handle student data management. This system uses custom memory structures combined with persistent binary storage to provide data lifecycle tracking without a traditional database.
 
-Core Features
+## Core Features
 * **Create (Add Records):** Stores student data with integrated real-time ID unique validation checks.
 * **Read (Search & Display):** Instantly parses binary logs to locate a specific record or display all active logs in an aligned format.
 * **Update (In-Place Modifications):** Locates records using targeted byte offset jumps and overrides active entries.
 * **Delete (Garbage Cleaning):** Filters and rewrites non-deleted data logs to a temporary container before safely cleaning and restructuring the master log file.
 * **View Sorted (Memory Buffering):** Calculates file allocation limits dynamically, copies raw data streams into a runtime buffer array, and runs a descending Bubble Sort algorithm by GPA.
 
- Defensive Programming & Data Safety:
+## Defensive Programming & Data Safety:
  
 Duplicate ID Prevention:The engine calls `idExists()` to cross-examine files before writing a fresh entry, preventing structural file anomalies and primary key collisions.
 Byte Offset Integrity Guard: Uses dynamic stream modifications via `fseek(fp, -sizeof(Student), SEEK_CUR);` to ensure updating processes alter exactly the current structure segment without sliding data corruption down the file stream.
 Dynamic Memory Allocations:During sorting processes, raw byte calculations (`ftell`) determine runtime sizes safely, mapping memory cleanly with `malloc()` and resolving leakage with proper `free()` callbacks.
 Menu Control Sanitation: Intercepts wrong data types using an initial `scanf` state valuation, clearing memory buffers dynamically (`while(getchar() != '\n');`) to safely shut down potential terminal infinite loops.
 
- Data Infrastructure & Prototyping
+## Data Infrastructure & Prototyping
 The framework leverages a structured user definition tracking a unique layout format:
 ```c
 typedef struct {
@@ -26,12 +26,12 @@ typedef struct {
 } Student;
 
 ```
-Data properties handle interactions consistently using decoupled process execution:
+## Data properties handle interactions consistently using decoupled process execution:
 addStudent() & displayAll(): Manage append (ab) and read (rb) file locks safely.
 updateStudent(): Opens a mixed binary pipeline (rb+) to read and execute targeted updates simultaneously.
 deleteStudent(): Isolates structural streams, relying on file drops (remove) and system renaming blocks (rename).
 
-Compilation & Running:
+## Compilation & Running:
 Compile the source code:
 Bash
 ```c
@@ -44,7 +44,7 @@ Bash
 ./student_system
 ```
 
-Layout Preview:
+## Layout Preview:
 
 Plaintext
 
@@ -61,7 +61,7 @@ Selection: 1
 Enter ID: 101
 Error: ID 101 already exists!
 
- Planned Upgrades & Future Roadmap:
+## Planned Upgrades & Future Roadmap:
  
  To transition this CLI utility into an enterprise portfolio project, the following improvements are targeted:
 
