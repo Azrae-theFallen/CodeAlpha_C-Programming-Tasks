@@ -1,0 +1,133 @@
+#include <stdio.h>
+
+#define MAX 10
+
+// Function Prototypes
+void inputMatrix(int mat[MAX][MAX], int row, int col);
+void displayMatrix(int mat[MAX][MAX], int row, int col, char* title);
+void addMatrix(int A[MAX][MAX], int B[MAX][MAX], int row, int col);
+void multiplyMatrix(int A[MAX][MAX], int B[MAX][MAX], int r1, int c1, int c2);
+void transposeMatrix(int mat[MAX][MAX], int row, int col);
+
+int main() {
+    int A[MAX][MAX], B[MAX][MAX];
+    int r1, c1, r2, c2;
+    int choice;
+    char repeat;
+
+    do {
+        printf("\n===== MAIN MENU: MATRIX OPERATIONS =====\n");
+        printf("1. Matrix Addition\n");
+        printf("2. Matrix Multiplication\n");
+        printf("3. Matrix Transpose\n");
+        printf("4. Exit\n");
+        printf("Enter choice: ");
+        
+        // If scanf fails to read a number, we clear the buffer to prevent infinite loops
+        if (scanf("%d", &choice) != 1) {
+            while (getchar() != '\n'); 
+            printf("Invalid input! Please enter a number.\n");
+            continue;
+        }
+
+        if (choice == 4) break;
+
+        switch(choice) {
+            case 1:
+                printf("\n[SUB-MENU] Enter rows,columns (e.g., 2,2): ");
+                scanf("%d,%d", &r1, &c1); // Fixed to use commas
+                
+                printf("Enter Matrix A:\n");
+                inputMatrix(A, r1, c1);
+                printf("Enter Matrix B:\n");
+                inputMatrix(B, r1, c1);
+                addMatrix(A, B, r1, c1);
+                break;
+
+            case 2:
+                printf("\n[SUB-MENU] Enter Matrix A rows,cols (e.g., 2,3): ");
+                scanf("%d,%d", &r1, &c1);
+                printf("Enter Matrix B rows,cols (e.g., 3,2): ");
+                scanf("%d,%d", &r2, &c2);
+
+                if(c1 != r2) {
+                    printf("Error: Matrix columns of A must match rows of B!\n");
+                } else {
+                    printf("Enter Matrix A:\n");
+                    inputMatrix(A, r1, c1);
+                    printf("Enter Matrix B:\n");
+                    inputMatrix(B, r2, c2);
+                    multiplyMatrix(A, B, r1, c1, c2);
+                }
+                break;
+
+            case 3:
+                printf("\n[SUB-MENU] Enter rows,columns (e.g., 3,2): ");
+                scanf("%d,%d", &r1, &c1);
+                printf("Enter Matrix:\n");
+                inputMatrix(A, r1, c1);
+                transposeMatrix(A, r1, c1);
+                break;
+
+            default:
+                printf("Invalid choice! Returning to menu.\n");
+        }
+
+        printf("\nDone! Do you want to perform another operation? (y/n): ");
+        scanf(" %c", &repeat); // The space before %c is vital to skip the Enter key
+
+    } while(repeat == 'y' || repeat == 'Y');
+
+    printf("Exiting program...\n");
+    return 0;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+void inputMatrix(int mat[MAX][MAX], int row, int col) {
+    for(int i = 0; i < row; i++) {
+        for(int j = 0; j < col; j++) {
+            printf("  [%d,%d]: ", i, j); // Consistent with comma theme
+            scanf("%d", &mat[i][j]);
+        }
+    }
+}
+
+void displayMatrix(int mat[MAX][MAX], int row, int col, char* title) {
+    printf("\n--- RESULT: %s ---\n", title);
+    for(int i = 0; i < row; i++) {
+        printf("  ");
+        for(int j = 0; j < col; j++) {
+            printf("%d\t", mat[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void addMatrix(int A[MAX][MAX], int B[MAX][MAX], int row, int col) {
+    int C[MAX][MAX];
+    for(int i = 0; i < row; i++)
+        for(int j = 0; j < col; j++)
+            C[i][j] = A[i][j] + B[i][j];
+    displayMatrix(C, row, col, "ADDITION");
+}
+
+void multiplyMatrix(int A[MAX][MAX], int B[MAX][MAX], int r1, int c1, int c2) {
+    int C[MAX][MAX];
+    for(int i = 0; i < r1; i++) {
+        for(int j = 0; j < c2; j++) {
+            C[i][j] = 0;
+            for(int k = 0; k < c1; k++)
+                C[i][j] += A[i][k] * B[k][j];
+        }
+    }
+    displayMatrix(C, r1, c2, "MULTIPLICATION");
+}
+
+void transposeMatrix(int mat[MAX][MAX], int row, int col) {
+    int T[MAX][MAX];
+    for(int i = 0; i < row; i++)
+        for(int j = 0; j < col; j++)
+            T[j][i] = mat[i][j];
+    displayMatrix(T, col, row, "TRANSPOSE");
+}
