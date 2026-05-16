@@ -1,0 +1,211 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    long long acc_no; // Upgraded to long long for 10-digit numbers
+    char name[50];
+    int pin;
+    float balance;
+} Account;
+
+const char* FILENAME = "bank_data.dat";
+
+// Clears the input buffer to prevent menu skipping
+void clearBuffer() {
+    while (getchar() != '\n');
+}
+
+// Checks if an account exists using long long
+int accountExists(long long acc_no) {
+    FILE *fp = fopen(FILENAME, "rb");
+    if (!fp) return 0;
+    Account temp;
+    while (fread(&temp, sizeof(Account), 1, fp)) {
+        if (temp.acc_no == acc_no) {
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+
+void createAccount() {
+    FILE *fp = fopen(FILENAME, "ab");
+    Account acc;
+    printf("\n--- Open Account ---");
+    printf("\nEnter 10-digit Account Number: ");
+    scanf("%lld", &acc.acc_no); // %lld for long long
+
+    if (accountExists(acc.acc_no)) {
+        printf("❌ Error: Account number already exists!\n");
+        fclose(fp);
+        return;
+    }
+
+    printf("Enter Full Name: ");
+    clearBuffer(); 
+    fgets(acc.name, 50, stdin);
+    acc.name[strcspn(acc.name, "\n")] = 0;
+
+    printf("Set 4-digit PIN: ");
+    scanf("%d", &acc.pin);
+    acc.balance = 0.0;
+
+    fwrite(&acc, sizeof(Account), 1, fp);
+    fclose(fp);
+    printf("✅ Account opened successfully for %s!\n", acc.name);
+}
+
+void deposit() {
+    FILE *fp = fopen(FILENAME, "rb+");
+    if (!fp) { printf("❌ Database empty.\n"); return; }
+    long long acc_no;
+    float amount;
+    Account acc;
+    int found = 0;
+
+    printf("\nEnter Account Number: ");
+    scanf("%lld", &acc_no);
+
+    while (fread(&acc, sizeof(Account), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            printf("Enter Amount: ");
+            scanf("%f", &amount);
+            acc.balance += amount;
+            fseek(fp, -sizeof(Account), SEEK_CUR);
+            fwrite(&acc, sizeof(Account), 1, fp);
+            printf("✅ Deposited $%.2f. Balance: $%.2f\n", amount, acc.balance);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) printf("❌ Account not found.\n");
+    fclose(fp);
+}
+
+void withdraw() {
+    FILE *fp = fopen(FILENAME, "rb+");
+    if (!fp) return;
+    long long acc_no;
+    int pin, found = 0;
+    float amount;
+    Account acc;
+
+    printf("\nEnter Account Number: ");
+    scanf("%lld", &acc_no);
+
+    while (fread(&acc, sizeof(Account), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            printf("Enter PIN: ");
+            scanf("%d", &pin);
+            if (pin != acc.pin) {
+                printf("❌ Incorrect PIN!\n");
+                fclose(fp); return;
+            }
+            printf("Enter Amount: ");
+            scanf("%f", &amount);
+            if (amount > acc.balance) printf("❌ Insufficient funds!\n");
+            else {
+                acc.balance -= amount;
+                fseek(fp, -sizeof(Account), SEEK_CUR);
+                fwrite(&acc, sizeof(Account), 1, fp);
+                printf("✅ Withdrew $%.2f.\n", amount);
+            }
+            found = 1; break;
+        }
+    }
+    if (!found) printf("❌ Not found.\n");
+    fclose(fp);
+}
+
+void transferMoney() {
+    FILE *fp = fopen(FILENAME, "rb+");
+    if (!fp) return;
+    long long src_acc, tgt_acc;
+    int pin;
+    float amount;
+    Account src, tgt;
+    long src_pos = -1, tgt_pos = -1;
+
+    printf("\nFrom Account: "); scanf("%lld", &src_acc);
+    printf("To Account: "); scanf("%lld", &tgt_acc);
+
+    rewind(fp);
+    while (fread(&src, sizeof(Account), 1, fp)) {
+        if (src.acc_no == src_acc) { src_pos = ftell(fp) - sizeof(Account); break; }
+    }
+    rewind(fp);
+    while (fread(&tgt, sizeof(Account), 1, fp)) {
+        if (tgt.acc_no == tgt_acc) { tgt_pos = ftell(fp) - sizeof(Account); break; }
+    }
+
+    if (src_pos == -1 || tgt_pos == -1) {
+        printf("❌ Invalid Account Number(s).\n");
+    } else {
+        fseek(fp, src_pos, SEEK_SET);
+        fread(&src, sizeof(Account), 1, fp);
+        printf("Enter PIN for %lld: ", src.acc_no); // Fixed display
+        scanf("%d", &pin);
+
+        if (pin == src.pin) {
+            printf("Amount to Transfer: "); scanf("%f", &amount);
+            if (amount <= src.balance) {
+                src.balance -= amount;
+                fseek(fp, src_pos, SEEK_SET);
+                fwrite(&src, sizeof(Account), 1, fp);
+
+                fseek(fp, tgt_pos, SEEK_SET);
+                fread(&tgt, sizeof(Account), 1, fp);
+                tgt.balance += amount;
+                fseek(fp, tgt_pos, SEEK_SET);
+                fwrite(&tgt, sizeof(Account), 1, fp);
+                printf("✅ Successfully sent $%.2f to %s.\n", amount, tgt.name);
+            } else printf("❌ Insufficient funds.\n");
+        } else printf("❌ Incorrect PIN.\n");
+    }
+    fclose(fp);
+}
+
+void checkBalance() {
+    FILE *fp = fopen(FILENAME, "rb");
+    if (!fp) return;
+    long long acc_no;
+    int pin, found = 0;
+    Account acc;
+    printf("\nEnter Account Number: "); scanf("%lld", &acc_no);
+    while (fread(&acc, sizeof(Account), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            printf("Enter PIN: "); scanf("%d", &pin);
+            if (pin == acc.pin) {
+                printf("\nHolder: %s\nBalance: $%.2f\n", acc.name, acc.balance);
+            } else printf("❌ Wrong PIN.\n");
+            found = 1; break;
+        }
+    }
+    if (!found) printf("❌ Account not found.\n");
+    fclose(fp);
+}
+
+int main() {
+    int choice;
+    while (1) {
+        printf("\n==============================");
+        printf("\n    CITY BANK SYSTEM     ");
+        printf("\n==============================");
+        printf("\n1. Open Account\n2. Deposit\n3. Withdraw\n4. Transfer\n5. Balance Inquiry\n6. Exit");
+        printf("\nSelect Option: ");
+        if (scanf("%d", &choice) != 1) { clearBuffer(); continue; }
+        switch (choice) {
+            case 1: createAccount(); break;
+            case 2: deposit(); break;
+            case 3: withdraw(); break;
+            case 4: transferMoney(); break;
+            case 5: checkBalance(); break;
+            case 6: exit(0);
+            default: printf("Invalid choice.\n");
+        }
+    }
+    return 0;
+}
