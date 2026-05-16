@@ -31,15 +31,28 @@ Bash
 ./calculator
 ```
 3.Operation:
+```text
+==================================
+   SYSTEM: ARITHMETIC INTERFACE   
+==================================
+ 1. [ADD]      Addition
+ 2. [SUB]      Subtraction
+ 3. [MUL]      Multiplication
+ 4. [DIV]      Division
+ 5. [EXIT]     Close Program
+----------------------------------
+Select Operation (1-5): 1
 
-(1).Select an operation from the main menu (1-5).
+Enter first value: 4
+Enter second value: 5
 
-(2).Input your two numerical values.
+--- CALCULATION REPORT ---
+Result: 4.00 + 5.00 = 9.00
+----------------------------------
+Choose: [C]ontinue to Menu or [E]xit Program? E
 
-(3).Review the "Calculation Report."
-
-(4).Press 'C' to return to the menu or 'E
-
+[SYSTEM] Process Terminated. Goodbye!
+```
 ## Proposed Future Improvements:
 
 1.To scale this utility into a more advanced tool, the following upgrades are planned:
@@ -54,4 +67,5 @@ Bash
 
 6.History Logging: Automatically saving all session calculations to a history.txt file using C file handling.
 
-License Distributed under the MIT License. 
+## License
+Distributed under the MIT License. 
